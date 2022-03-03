@@ -1,0 +1,12 @@
+server:
+  port: 8005
+
+application:
+  name: goapp-service
+
+go:
+  datasource:
+    url: localhost:3306
+    username: root
+    password: root
+    schemas: creative
