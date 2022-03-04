@@ -1,6 +1,0 @@
-API: 2022/03/03 20:55:39 service.go:18: Request URI /app/123 and Res {123 Spotify}
-API: 2022/03/03 23:32:01 service.go:37: API Req /app/v1/1 and Res <nil>
-API: 2022/03/03 23:40:47 service.go:37: API Req /app/v1/1 and Res &{ }
-API: 2022/03/03 23:44:02 service.go:37: API Req /app/v1/1 and Res &{1 creative}
-API: 2022/03/03 23:45:10 service.go:38: API Req /app/v1/1 and Res &{1 creative}
-API: 2022/03/03 23:47:06 service.go:38: API Req /app/v1/1 and Res {1 creative}
