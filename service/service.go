@@ -17,7 +17,10 @@ func HandleGetAppInfoById(writer http.ResponseWriter, req *http.Request) {
 	for _, app := range infos {
 		if app.AppId == appId {
 			log.DebugLogger.Printf("Request URI %v and Res %v", log.GetRequestURI(req), app)
-			json.NewEncoder(writer).Encode(app)
+			err := json.NewEncoder(writer).Encode(app)
+			if err != nil {
+				log.ErrorLogger.Printf("json conversion error %v", appId)
+			}
 		}
 	}
 }
@@ -36,5 +39,8 @@ func HandleGet(w http.ResponseWriter, r *http.Request) {
 	infoLogger.Printf("Returning from HandleGet with response %v", *data)
 	debugLogger := log.DebugLogger
 	debugLogger.Printf("API Req %v and Res %v", log.GetRequestURI(r), *data)
-	json.NewEncoder(w).Encode(data)
+	err = json.NewEncoder(w).Encode(data)
+	if err != nil {
+		log.ErrorLogger.Printf("json conversion error %v", appId)
+	}
 }

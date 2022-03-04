@@ -22,7 +22,7 @@ const (
 func CreateDBConnection() *sql.DB {
 	infoLogger := logger.InfoLogger
 	errorLogger := logger.ErrorLogger
-	conn, err := sql.Open(dbDriverName, "root:root@tcp(0.0.0.0:3306)/creative")
+	conn, err := sql.Open(dbDriverName, prepareUrl(""))
 	if err != nil {
 		errorLogger.Printf("%v", err)
 	}
@@ -35,9 +35,9 @@ func CreateDBConnection() *sql.DB {
 
 func prepareUrl(dbInstance string) string {
 	if dbInstance == "" {
-		return fmt.Sprint("%s:%s@tcp(%s)/%s", dbUserName, dbUserPass, dbURL, dbSchema)
+		return fmt.Sprintf("%s:%s@tcp(%s)/%s", dbUserName, dbUserPass, dbURL, dbSchema)
 	} else {
-		return fmt.Sprint("%s:%s@tcp(%s)/%s", dbUserName, dbUserPass, dbURL, dbSchema)
+		return fmt.Sprintf("%s:%s@tcp(%s)/%s", dbUserName, dbUserPass, dbURL, dbSchema)
 	}
 }
 
@@ -52,7 +52,12 @@ func InsertToDB(db *sql.DB, query string, lc entity.AppInfo) (*entity.AppInfo, e
 		errorLogger.Printf("Error with %s preparing SQL statement", err)
 		return nil, err
 	}
-	defer stmt.Close()
+	defer func(stmt *sql.Stmt) {
+		err := stmt.Close()
+		if err != nil {
+			errorLogger.Printf("Error with %s closing stmt", err)
+		}
+	}(stmt)
 	var data = entity.AppInfo{}
 	res, err := stmt.ExecContext(ctx, lc.AppId, lc.AppName)
 	if err != nil {
@@ -79,8 +84,14 @@ func ReadAppInfoByID(db *sql.DB, query string, appId string) (*entity.AppInfo, e
 		return nil, err
 	}
 	for res.Next() {
-		res.Scan(&data.AppId, &data.AppName)
+		err := res.Scan(&data.AppId, &data.AppName)
+		if err != nil {
+			errorLogger.Printf("Error %v when scanning thr response", err)
+		}
 	}
-	db.Close()
+	err = db.Close()
+	if err != nil {
+		return nil, err
+	}
 	return &data, nil
 }

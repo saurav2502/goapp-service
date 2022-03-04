@@ -14,7 +14,7 @@ type App struct {
 	Router *mux.Router
 }
 
-func (a *App) Run() {
+func (app *App) Run() {
 	viper.SetConfigName("config")
 	viper.AddConfigPath("./resources")
 	viper.AutomaticEnv()
@@ -30,9 +30,9 @@ func (a *App) Run() {
 		errorLogger.Printf("Unable to decode into struct, %v", err)
 	}
 	port := ":" + strconv.Itoa(configuration.Server.Port)
-	log := log.InfoLogger
-	log.Print("App is running on the port ", port)
-	log.Fatal(http.ListenAndServe(port, a.Router))
+	infoLogger := log.InfoLogger
+	infoLogger.Print("App is running on the port ", port)
+	infoLogger.Fatal(http.ListenAndServe(port, app.Router))
 }
 
 func (app *App) RestHandlerController() {
